@@ -7,42 +7,43 @@
 <html>
 
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Checkerboard</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Checkerboard</title>
 
-<!-- Load style sheets -->
-<link rel="stylesheet" type="text/css" href="mainLayout.css" />
+    <!-- Load style sheets -->
+    <link rel="stylesheet" type="text/css" href="mainLayout.css" />
 
-<!-- Load any supplemental Javascript libraries here -->
-<script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
-<script type="text/javascript" src="checker.js"></script>
-<script type="text/javascript" src="boardEvent.js"></script>
-<script type="text/javascript" src="board.js"></script>
-<script type="text/javascript" src="rules.js"></script>
+    <!-- Load any supplemental Javascript libraries here -->
+    <script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="checker.js"></script>
+    <script type="text/javascript" src="boardEvent.js"></script>
+    <script type="text/javascript" src="board.js"></script>
+    <script type="text/javascript" src="rules.js"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
 //This script extracts parameters from the URL
 //from jquery-howto.blogspot.com
 
-    $.extend({
-        getUrlVars : function() {
-            var vars = [], hash;
-            var hashes = window.location.href.slice(
-                    window.location.href.indexOf('?') + 1).split('&');
-            for ( var i = 0; i < hashes.length; i++) {
-                hash = hashes[i].split('=');
-                vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
-            }
-            return vars;
-        },
-        getUrlVar : function(name) {
-            return $.getUrlVars()[name];
+$.extend({
+    getUrlVars : function() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(
+            window.location.href.indexOf('?') + 1).split('&');
+        for ( var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
         }
-    });
+        return vars;
+    },
+    getUrlVar : function(name) {
+        return $.getUrlVars()[name];
+    }
+});
 
-    var DEFAULT_BOARD_SIZE = 8;
+var DEFAULT_BOARD_SIZE = 8;
+var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 
     //data model
     var board;
@@ -52,30 +53,31 @@
     var directionOf = function(color) {
       if (color == "black") {
         return -1;
-      }
-      return 1;
     }
+    return 1;
+}
 
     // Fill in this function to toggle the display for whose turn
     // The color parameter should be either "black" or "red"
     var toggleTurn = function(color) {
 	// Your code here
-    }
+}
 
 
 
     // This allows the Javascript code inside this block to only run when the page
     // has finished loading in the browser.
     $(document).ready(function() {
-
         if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
+            BOARD_SIZE = $.getUrlVar('size');
             board = new Board($.getUrlVar('size'));
         } else {
+            BOARD_SIZE = DEFAULT_BOARD_SIZE;
             board = new Board(DEFAULT_BOARD_SIZE);
         }
 
 
-	rules = new Rules(board);
+        rules = new Rules(board);
 
 
      	// Your code here
@@ -84,7 +86,7 @@
     		// Your code here
     	},true);
 
-    	board.addEventListener('move',function (e) {
+        board.addEventListener('move',function (e) {
     		// Your code here
     	},true);
 
@@ -107,8 +109,8 @@
           var result = rules.makeRandomMove(playerColor, playerDirection);
           if (result != null) {
             toggleTurn();
-          }
-        });
+        }
+    });
 
         board.prepareNewGame();
 
@@ -120,26 +122,33 @@
 
 <body>
 
-<table id="mainTable">
-    <tr>
-        <td id="navigation">
-          <table>
-			  <tr><td>	 <!-- Your code here -->			</td></tr>
-              <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
-              <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+    <table id="mainTable">
+        <tr>
+            <td id="navigation">
+              <table>
+                 <tr><td>	 <!-- Your code here -->			</td></tr>
+                 <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+                 <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
 
-            </table>
-        </td>
+             </table>
+         </td>
 
-        <td id="content">
-			     
-				<!-- Your code here -->
-            
-        </td>
-    </tr>
+         <td id="content">
+           <canvas id = "checkerBoard" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
+           <!-- Your code here -->
 
-   </table>
+       </td>
+   </tr>
 
+</table>
+<script>
+$(document).ready( function() {
+    console.log(BOARD_SIZE);
+});
+
+
+
+</script>
 </body>
 
 </html>
