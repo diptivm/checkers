@@ -1,0 +1,17 @@
+﻿#navigation{
+	width:140px
+}
+
+#navigation table{
+	width:100%
+}
+
+#navigation input{
+	width:100%
+}
+
+#content{
+	background-color:gray;
+	width: 400px;
+	height: 400px;
+}
