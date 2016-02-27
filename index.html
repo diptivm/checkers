@@ -144,6 +144,20 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 <script>
 $(document).ready( function() {
     console.log(BOARD_SIZE);
+    var sqSize = 400/BOARD_SIZE;
+    console.log(sqSize);
+
+    var c = document.getElementById('checkerBoard');
+    var ctx = c.getContext('2d');
+
+    ctx.fillStyle = "#ffffff";
+    for(var i = 0; i < BOARD_SIZE; i++) {
+       for(var j = 0; j < BOARD_SIZE/2; j++) {
+            ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
+        } 
+    }
+    
+    
 });
 
 
