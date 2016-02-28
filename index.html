@@ -68,35 +68,35 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
     // This allows the Javascript code inside this block to only run when the page
     // has finished loading in the browser.
     $(document).ready(function() {
-        if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
-            BOARD_SIZE = $.getUrlVar('size');
-            board = new Board($.getUrlVar('size'));
-        } else {
-            BOARD_SIZE = DEFAULT_BOARD_SIZE;
-            board = new Board(DEFAULT_BOARD_SIZE);
-        }
+
+      if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
+        BOARD_SIZE = $.getUrlVar('size');
+        board = new Board($.getUrlVar('size'));
+    } else {
+        BOARD_SIZE = DEFAULT_BOARD_SIZE;
+        board = new Board(DEFAULT_BOARD_SIZE);
+    }
 
 
-        rules = new Rules(board);
-
+    rules = new Rules(board);
 
      	// Your code here
 
         board.addEventListener('add',function (e) {
-    		// Your code here
-    	},true);
+            // Your code here
+        },true);
 
         board.addEventListener('move',function (e) {
-    		// Your code here
-    	},true);
+            // Your code here
+        },true);
 
         board.addEventListener('remove', function(e) {
-        	// Your code here
+            // Your code here
         }, true);
 
         board.addEventListener('promote',function (e) {
-    		// Your code here
-    	},true);
+            // Your code here
+        },true);
 
         
         $("#btnNewGame").click(function(evt) {
@@ -147,44 +147,32 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 <img id="black-king" src="graphics/black-king.png" alt="Red Piece" width="0" height="0">
 
 <script>
+var sqSize;
+var c;
+var ctx;
+
 var getCheckerImage = function(checkerName) {
     var img = null;
     if(checkerName == 'red') {
         img = document.getElementById("red-piece");
     }
     else if(checkerName == 'black'){
-         img = document.getElementById("black-piece");
-    }
-    else if(checkerName == 'RED'){
-         img = document.getElementById("red-king");
-    }
-    else if(checkerName == 'BLACK'){
-         img = document.getElementById("black-king");
-    }
-    return img;
-    
+     img = document.getElementById("black-piece");
+ }
+ else if(checkerName == 'RED'){
+     img = document.getElementById("red-king");
+ }
+ else if(checkerName == 'BLACK'){
+     img = document.getElementById("black-king");
+ }
+ return img;
 }
 
-$(document).ready( function() {
-    console.log(BOARD_SIZE);
-    var sqSize = 400/BOARD_SIZE;
-    console.log(sqSize);
-
-    var c = document.getElementById('checkerBoard');
-    var ctx = c.getContext('2d');
-
-    ctx.fillStyle = "#ffffff";
-    for(var i = 0; i < BOARD_SIZE; i++) {
-       for(var j = 0; j < BOARD_SIZE/2; j++) {
-            ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
-        } 
-    }
-    
+drawCheckers = function() {
     var currChecker;
     var currCheckerName;
     var currCheckerImage;
 
-window.onload  = function() {
     for(i = 0; i < BOARD_SIZE; i++) {
         for(j = 0; j < BOARD_SIZE; j++) {
             currChecker = board.getCheckerAt(i,j);
@@ -199,8 +187,31 @@ window.onload  = function() {
         }
     }
 }
-    
-    
+
+drawBoard = function() {
+    ctx.fillStyle = "#ffffff";
+    for(var i = 0; i < BOARD_SIZE; i++) {
+       for(var j = 0; j < BOARD_SIZE/2; j++) {
+        ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
+        } 
+    }
+}
+
+$(document).ready( function() {
+    //console.log(BOARD_SIZE);
+    sqSize = 400/BOARD_SIZE;
+    //console.log(sqSize);
+
+    c = document.getElementById('checkerBoard');
+    ctx = c.getContext('2d');
+
+    drawBoard();
+
+    window.onload  = function() {
+        console.log("window load");
+        drawCheckers();
+    }
+
 });
 
 </script>
