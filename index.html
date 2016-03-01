@@ -69,8 +69,20 @@ var ctx;
     else if("red" == whoseTurn) {
       whoseTurn = "black";
     }
+    toggleTurnFeedback();
     // Your code here
   }
+
+    var toggleTurnFeedback = function() {
+      if("black" == whoseTurn) {
+        document.getElementById('turn-feedback').innerHTML = "Black Turn";
+        document.getElementById('turn-feedback').className = 'black-turn';
+      }
+      else if ("red" == whoseTurn) {
+        document.getElementById('turn-feedback').innerHTML = "Red Turn";
+         document.getElementById('turn-feedback').className = 'red-turn';
+      }
+    }
 
 
 
@@ -148,7 +160,7 @@ var ctx;
           <div class = "table-vert-align">
           <div class = "vert-align-middle">
           <table>
-           <tr><td><span id = "turn-feedback">	</span> <!-- Your code here -->			</td></tr>
+           <tr><td><div id = "turn-feedback" class = "black-turn">	Black Turn </div>  	</td></tr>
            <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
            <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
          </div>
