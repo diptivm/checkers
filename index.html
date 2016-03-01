@@ -7,43 +7,46 @@
 <html>
 
 <head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>Checkerboard</title>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <title>Checkerboard</title>
 
-    <!-- Load style sheets -->
-    <link rel="stylesheet" type="text/css" href="mainLayout.css" />
+  <!-- Load style sheets -->
+  <link rel="stylesheet" type="text/css" href="mainLayout.css" />
 
-    <!-- Load any supplemental Javascript libraries here -->
-    <script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
-    <script type="text/javascript" src="checker.js"></script>
-    <script type="text/javascript" src="boardEvent.js"></script>
-    <script type="text/javascript" src="board.js"></script>
-    <script type="text/javascript" src="rules.js"></script>
+  <!-- Load any supplemental Javascript libraries here -->
+  <script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
+  <script type="text/javascript" src="checker.js"></script>
+  <script type="text/javascript" src="boardEvent.js"></script>
+  <script type="text/javascript" src="board.js"></script>
+  <script type="text/javascript" src="rules.js"></script>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
 
 //This script extracts parameters from the URL
 //from jquery-howto.blogspot.com
 
 $.extend({
-    getUrlVars : function() {
-        var vars = [], hash;
-        var hashes = window.location.href.slice(
-            window.location.href.indexOf('?') + 1).split('&');
-        for ( var i = 0; i < hashes.length; i++) {
-            hash = hashes[i].split('=');
-            vars.push(hash[0]);
-            vars[hash[0]] = hash[1];
-        }
-        return vars;
-    },
-    getUrlVar : function(name) {
-        return $.getUrlVars()[name];
+  getUrlVars : function() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(
+      window.location.href.indexOf('?') + 1).split('&');
+    for ( var i = 0; i < hashes.length; i++) {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
     }
+    return vars;
+  },
+  getUrlVar : function(name) {
+    return $.getUrlVars()[name];
+  }
 });
 
 var DEFAULT_BOARD_SIZE = 8;
 var BOARD_SIZE = DEFAULT_BOARD_SIZE;
+
+var c;
+var ctx;
 
     //data model
     var board;
@@ -53,15 +56,21 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
     var directionOf = function(color) {
       if (color == "black") {
         return -1;
+      }
+      return 1;
     }
-    return 1;
-}
 
     // Fill in this function to toggle the display for whose turn
     // The color parameter should be either "black" or "red"
     var toggleTurn = function(color) {
-	// Your code here
-}
+     if("black" == whoseTurn) {
+      whoseTurn = "red";
+    }
+    else if("red" == whoseTurn) {
+      whoseTurn = "black";
+    }
+    // Your code here
+  }
 
 
 
@@ -72,47 +81,57 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
       if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
         BOARD_SIZE = $.getUrlVar('size');
         board = new Board($.getUrlVar('size'));
-    } else {
+      } else {
         BOARD_SIZE = DEFAULT_BOARD_SIZE;
         board = new Board(DEFAULT_BOARD_SIZE);
-    }
+      }
 
 
-    rules = new Rules(board);
+      rules = new Rules(board);
 
      	// Your code here
+      c = document.getElementById('checkerBoard');
+      ctx = c.getContext('2d');
 
-        board.addEventListener('add',function (e) {
+      board.addEventListener('add',function (e) {
+        drawBoard();
+        drawCheckers();
             // Your code here
-        },true);
+          },true);
 
-        board.addEventListener('move',function (e) {
+      board.addEventListener('move',function (e) {
+       drawBoard();
+       drawCheckers();
             // Your code here
-        },true);
+          },true);
 
-        board.addEventListener('remove', function(e) {
+      board.addEventListener('remove', function(e) {
+        drawBoard();
+        drawCheckers();
             // Your code here
-        }, true);
+          }, true);
 
-        board.addEventListener('promote',function (e) {
+      board.addEventListener('promote',function (e) {
+        drawBoard();
+        drawCheckers();
             // Your code here
-        },true);
+          },true);
 
-        
-        $("#btnNewGame").click(function(evt) {
-            board.prepareNewGame();
-        });
 
-        $("#btnAutoMove").click(function(evt) {
-          var playerColor = whoseTurn;
-          var playerDirection = directionOf(playerColor);
-          var result = rules.makeRandomMove(playerColor, playerDirection);
-          if (result != null) {
-            toggleTurn();
-        }
-    });
-
+      $("#btnNewGame").click(function(evt) {
         board.prepareNewGame();
+      });
+
+      $("#btnAutoMove").click(function(evt) {
+        var playerColor = whoseTurn;
+        var playerDirection = directionOf(playerColor);
+        var result = rules.makeRandomMove(playerColor, playerDirection);
+        if (result != null) {
+          toggleTurn();
+        }
+      });
+
+      board.prepareNewGame();
 
     });
 </script>
@@ -122,23 +141,29 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 
 <body>
 
-    <table id="mainTable">
-        <tr>
-            <td id="navigation">
-              <table>
-                 <tr><td>	 <!-- Your code here -->			</td></tr>
-                 <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
-                 <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+  <table id="mainTable">
+    <tr id = "main">
+      <td id="navigation">
+        <div class = "fixed-height">
+          <div class = "table-vert-align">
+          <div class = "vert-align-middle">
+          <table>
+           <tr><td><span id = "turn-feedback">	</span> <!-- Your code here -->			</td></tr>
+           <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+           <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+         </div>
+       </div>
+         </div>
+       </table>
+     </td>
 
-             </table>
-         </td>
-
-         <td id="content">
-           <canvas id = "checkerBoard" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
-           <!-- Your code here -->
-
-       </td>
-   </tr>
+     <td id="content">
+      <div class = "fixed-height">
+       <canvas id = "checkerBoard" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
+       <!-- Your code here -->
+     </div>
+   </td>
+ </tr>
 
 </table>
 <img id="red-piece" src="graphics/red-piece.png" alt="Red Piece" width="0" height="0">
@@ -148,53 +173,53 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 
 <script>
 var sqSize;
-var c;
-var ctx;
 
 var getCheckerImage = function(checkerName) {
-    var img = null;
-    if(checkerName == 'red') {
-        img = document.getElementById("red-piece");
-    }
-    else if(checkerName == 'black'){
-     img = document.getElementById("black-piece");
+  var img = null;
+  if(checkerName == 'red') {
+    img = document.getElementById("red-piece");
+  }
+  else if(checkerName == 'black'){
+   img = document.getElementById("black-piece");
  }
  else if(checkerName == 'RED'){
-     img = document.getElementById("red-king");
+   img = document.getElementById("red-king");
  }
  else if(checkerName == 'BLACK'){
-     img = document.getElementById("black-king");
+   img = document.getElementById("black-king");
  }
  return img;
 }
 
 drawCheckers = function() {
-    var currChecker;
-    var currCheckerName;
-    var currCheckerImage;
+  var currChecker;
+  var currCheckerName;
+  var currCheckerImage;
 
-    for(i = 0; i < BOARD_SIZE; i++) {
-        for(j = 0; j < BOARD_SIZE; j++) {
-            currChecker = board.getCheckerAt(i,j);
-            if(currChecker != null) {
-                currCheckerName = currChecker.toString();
-                console.log("Checker " + currCheckerName + " found at " + i + "," + j);
-                currCheckerImage = getCheckerImage(currCheckerName);
-                if(currCheckerImage != null) {
-                    ctx.drawImage(currCheckerImage,sqSize*j, sqSize*i,sqSize, sqSize);
-                }
-            }
+  for(i = 0; i < BOARD_SIZE; i++) {
+    for(j = 0; j < BOARD_SIZE; j++) {
+      currChecker = board.getCheckerAt(i,j);
+      if(currChecker != null) {
+        currCheckerName = currChecker.toString();
+        console.log("Checker " + currCheckerName + " found at " + i + "," + j);
+        currCheckerImage = getCheckerImage(currCheckerName);
+        if(currCheckerImage != null) {
+          ctx.drawImage(currCheckerImage,sqSize*j, sqSize*i,sqSize, sqSize);
         }
+      }
     }
+  }
 }
 
 drawBoard = function() {
-    ctx.fillStyle = "#ffffff";
-    for(var i = 0; i < BOARD_SIZE; i++) {
-       for(var j = 0; j < BOARD_SIZE/2; j++) {
-        ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
-        } 
-    }
+  ctx.fillStyle = "gray";
+  ctx.fillRect(0,0,400,400);
+  ctx.fillStyle = "#ffffff";
+  for(var i = 0; i < BOARD_SIZE; i++) {
+   for(var j = 0; j < BOARD_SIZE/2; j++) {
+    ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
+  } 
+}
 }
 
 $(document).ready( function() {
@@ -208,11 +233,11 @@ $(document).ready( function() {
     drawBoard();
 
     window.onload  = function() {
-        console.log("window load");
-        drawCheckers();
+      console.log("window load");
+      drawCheckers();
     }
 
-});
+  });
 
 </script>
 </body>
