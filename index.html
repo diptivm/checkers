@@ -114,7 +114,8 @@ var ctx;
       board.addEventListener('move',function (e) {
        drawBoard();
        drawCheckers();
-            // Your code here
+       drawArrow(e.details);
+       // Your code here
           },true);
 
       board.addEventListener('remove', function(e) {
@@ -201,6 +202,30 @@ var getCheckerImage = function(checkerName) {
    img = document.getElementById("black-king");
  }
  return img;
+}
+
+drawArrow = function(moveDetails) {
+  console.log(moveDetails.fromRow + "," + moveDetails.fromCol);
+  console.log(moveDetails.toRow + "," + moveDetails.toCol)
+  drawLine(moveDetails);
+  
+}
+
+drawLine = function(moveDetails) {
+  ctx.strokeStyle = "#ffe700";
+  ctx.lineWidth = 5;
+  var x0 = sqSize/2.0 + sqSize*(moveDetails.fromCol);
+  var y0 = sqSize/2.0 + sqSize*(moveDetails.fromRow);
+  var x1 = sqSize/2.0 + sqSize*(moveDetails.toCol);
+  var y1 = sqSize/2.0 + sqSize*(moveDetails.toRow);
+  console.log(x0 + "," + y0);
+  console.log(x1 + "," + y1);
+
+  ctx.beginPath()
+  ctx.moveTo(x0,y0);
+  ctx.lineTo(x1, y1);
+  ctx.closePath();
+  ctx.stroke();
 }
 
 drawCheckers = function() {
