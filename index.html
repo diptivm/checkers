@@ -24,7 +24,6 @@
 
 //This script extracts parameters from the URL
 //from jquery-howto.blogspot.com
-
 $.extend({
   getUrlVars : function() {
     var vars = [], hash;
@@ -73,16 +72,16 @@ var ctx;
     // Your code here
   }
 
-    var toggleTurnFeedback = function() {
-      if("black" == whoseTurn) {
-        document.getElementById('turn-feedback').innerHTML = "Black Turn";
-        document.getElementById('turn-feedback').className = 'black-turn';
-      }
-      else if ("red" == whoseTurn) {
-        document.getElementById('turn-feedback').innerHTML = "Red Turn";
-         document.getElementById('turn-feedback').className = 'red-turn';
-      }
+  var toggleTurnFeedback = function() {
+    if("black" == whoseTurn) {
+      document.getElementById('turn-feedback').innerHTML = "Black Turn";
+      document.getElementById('turn-feedback').className = 'black-turn';
     }
+    else if ("red" == whoseTurn) {
+      document.getElementById('turn-feedback').innerHTML = "Red Turn";
+      document.getElementById('turn-feedback').className = 'red-turn';
+    }
+  }
 
 
 
@@ -107,25 +106,25 @@ var ctx;
 
       board.addEventListener('add',function (e) {
         drawBoard();
-        drawCheckers();
+        //drawCheckers();
             // Your code here
           },true);
 
       board.addEventListener('move',function (e) {
        drawBoard();
-       drawCheckers();
+       //drawCheckers();
        // Your code here
-          },true);
+     },true);
 
       board.addEventListener('remove', function(e) {
         drawBoard();
-        drawCheckers();
+        //drawCheckers();
             // Your code here
           }, true);
 
       board.addEventListener('promote',function (e) {
         drawBoard();
-        drawCheckers();
+        //drawCheckers();
             // Your code here
           },true);
 
@@ -159,13 +158,13 @@ var ctx;
       <td id="navigation">
         <div class = "fixed-height">
           <div class = "table-vert-align">
-          <div class = "vert-align-middle">
-          <table>
-           <tr><td><div id = "turn-feedback" class = "black-turn">	Black Turn </div>  	</td></tr>
-           <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
-           <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
-         </div>
-       </div>
+            <div class = "vert-align-middle">
+              <table>
+               <tr><td><div id = "turn-feedback" class = "black-turn">	Black Turn </div>  	</td></tr>
+               <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+               <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+             </div>
+           </div>
          </div>
        </table>
      </td>
@@ -186,6 +185,22 @@ var ctx;
 
 <script>
 var sqSize;
+var checkerImages = [];
+var checkerMap = [];
+for(var i = 0; i < BOARD_SIZE; i++) {
+  checkerMap[i] = [];
+}
+
+createCheckerImages = function() {
+  numCheckers = 2*BOARD_SIZE;
+  for(var i = 0; i < numCheckers; i++) {
+    checkerImages[i] = document.createElement('img');
+    checkerImages[i].setAttribute("width", sqSize);
+    document.getElementById("content").appendChild( checkerImages[i]);
+  }
+} 
+
+createCheckerImages();
 
 var getCheckerImage = function(checkerName) {
   var img = null;
@@ -204,6 +219,28 @@ var getCheckerImage = function(checkerName) {
  return img;
 }
 
+var getCheckerPath = function(checkerName) {
+  var path = null;
+  if(checkerName == 'red') {
+   path = "graphics/red-piece.png";
+ }
+ else if(checkerName == 'black'){
+  path = "graphics/black-piece.png";
+ }
+ else if(checkerName == 'RED'){
+  path = "graphics/red-king.png";
+ }
+ else if(checkerName == 'BLACK'){
+  path = "graphics/black-king.png";
+ }
+ return path;
+}
+
+setCheckerPosition = function(checkerImage, x, y) {
+  checkerImage.style.position = "absolute";
+  checkerImage.style.left = x + "px";
+  checkerImage.style.top = y + "px";
+}
 
 drawArrow = function(moveDetails) {
   console.log(moveDetails.from_row + "," + moveDetails.from_col);
@@ -251,15 +288,15 @@ drawArrowHead = function(fromRow, fromCol, toRow, toCol)
     ctx.rotate(90 * Math.PI / 180);
   }
   else if(toRow > fromRow && toCol > fromCol) {
-     ctx.rotate(180 * Math.PI / 180);
-  }
-  else if(toRow > fromRow && toCol < fromCol) {
-    ctx.rotate(270 * Math.PI / 180);
-  }
+   ctx.rotate(180 * Math.PI / 180);
+ }
+ else if(toRow > fromRow && toCol < fromCol) {
+  ctx.rotate(270 * Math.PI / 180);
+}
 
-  ctx.fillStyle = "#ffe700";
-  drawTriangle();
-  ctx.restore();
+ctx.fillStyle = "#ffe700";
+drawTriangle();
+ctx.restore();
 }
 
 drawTriangle = function(){
@@ -274,7 +311,7 @@ drawTriangle = function(){
 
 
 
-drawCheckers = function() {
+drawCheckers1 = function() {
   var currChecker;
   var currCheckerName;
   var currCheckerImage;
@@ -289,6 +326,54 @@ drawCheckers = function() {
         if(currCheckerImage != null) {
           ctx.drawImage(currCheckerImage,sqSize*j, sqSize*i,sqSize, sqSize);
         }
+      }
+    }
+  }
+}
+
+drawCheckers = function() {
+  var currChecker;
+  var currCheckerName;
+  var currCheckerPath;
+  var currCheckerImage;
+  var imgIndex = 0;
+
+  clearCheckerMap();
+
+  for(i = 0; i < BOARD_SIZE; i++) {
+    for(j = 0; j < BOARD_SIZE; j++) {
+      currChecker = board.getCheckerAt(i,j);
+      if(currChecker != null) {
+        currCheckerName = currChecker.toString();
+        console.log("Checker " + currCheckerName + " found at " + i + "," + j);
+        currCheckerPath = getCheckerPath(currCheckerName);
+        if(currCheckerPath != null) {
+            currCheckerImage = checkerImages[imgIndex];
+            currCheckerImage.setAttribute("src", currCheckerPath);
+            setCheckerPosition(currCheckerImage, sqSize*j, sqSize*i);
+            checkerMap[i][j] = currCheckerImage;
+            imgIndex ++;
+        }
+      }
+    }
+  }
+
+  echoCheckerMap();
+}
+
+clearCheckerMap = function () {
+  for(i = 0; i < BOARD_SIZE; i++) {
+    for(j = 0; j < BOARD_SIZE; j++) {
+      checkerMap[i][j] = null;
+    }
+  }
+}
+
+echoCheckerMap = function() {
+  for(i = 0; i < BOARD_SIZE; i++) {
+    for(j = 0; j < BOARD_SIZE; j++) {
+      if(checkerMap[i][j] != null) {
+        console.log(i + "," + j + ":" + checkerMap[i][j].getAttribute("src"));
       }
     }
   }
