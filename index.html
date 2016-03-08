@@ -178,10 +178,6 @@ var ctx;
  </tr>
 
 </table>
-<img id="red-piece" src="graphics/red-piece.png" alt="Red Piece" width="0" height="0">
-<img id="black-piece" src="graphics/black-piece.png" alt="Red Piece" width="0" height="0">
-<img id="red-king" src="graphics/red-king.png" alt="Red Piece" width="0" height="0">
-<img id="black-king" src="graphics/black-king.png" alt="Red Piece" width="0" height="0">
 
 <script>
 var sqSize;
@@ -201,23 +197,6 @@ createCheckerImages = function() {
 } 
 
 createCheckerImages();
-
-var getCheckerImage = function(checkerName) {
-  var img = null;
-  if(checkerName == 'red') {
-    img = document.getElementById("red-piece");
-  }
-  else if(checkerName == 'black'){
-   img = document.getElementById("black-piece");
- }
- else if(checkerName == 'RED'){
-   img = document.getElementById("red-king");
- }
- else if(checkerName == 'BLACK'){
-   img = document.getElementById("black-king");
- }
- return img;
-}
 
 var getCheckerPath = function(checkerName) {
   var path = null;
@@ -307,28 +286,6 @@ drawTriangle = function(){
   ctx.lineTo(0,0);
   ctx.closePath();
   ctx.fill();
-}
-
-
-
-drawCheckers1 = function() {
-  var currChecker;
-  var currCheckerName;
-  var currCheckerImage;
-
-  for(i = 0; i < BOARD_SIZE; i++) {
-    for(j = 0; j < BOARD_SIZE; j++) {
-      currChecker = board.getCheckerAt(i,j);
-      if(currChecker != null) {
-        currCheckerName = currChecker.toString();
-        console.log("Checker " + currCheckerName + " found at " + i + "," + j);
-        currCheckerImage = getCheckerImage(currCheckerName);
-        if(currCheckerImage != null) {
-          ctx.drawImage(currCheckerImage,sqSize*j, sqSize*i,sqSize, sqSize);
-        }
-      }
-    }
-  }
 }
 
 drawCheckers = function() {
