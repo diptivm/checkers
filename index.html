@@ -114,7 +114,6 @@ var ctx;
       board.addEventListener('move',function (e) {
        drawBoard();
        drawCheckers();
-       drawArrow(e.details);
        // Your code here
           },true);
 
@@ -141,6 +140,7 @@ var ctx;
         var result = rules.makeRandomMove(playerColor, playerDirection);
         if (result != null) {
           toggleTurn();
+          drawArrow(result);
         }
       });
 
@@ -204,13 +204,14 @@ var getCheckerImage = function(checkerName) {
  return img;
 }
 
+
 drawArrow = function(moveDetails) {
-  console.log(moveDetails.fromRow + "," + moveDetails.fromCol);
-  console.log(moveDetails.toRow + "," + moveDetails.toCol)
-  var fromRow = moveDetails.fromRow;
-  var fromCol = moveDetails.fromCol;
-  var toRow = moveDetails.toRow;
-  var toCol= moveDetails.toCol;
+  console.log(moveDetails.from_row + "," + moveDetails.from_col);
+  console.log(moveDetails.to_row + "," + moveDetails.to_col)
+  var fromRow = moveDetails.from_row;
+  var fromCol = moveDetails.from_col;
+  var toRow = moveDetails.to_row;
+  var toCol= moveDetails.to_col;
 
   drawLine(fromRow, fromCol, toRow, toCol);
 
