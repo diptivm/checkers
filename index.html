@@ -207,17 +207,24 @@ var getCheckerImage = function(checkerName) {
 drawArrow = function(moveDetails) {
   console.log(moveDetails.fromRow + "," + moveDetails.fromCol);
   console.log(moveDetails.toRow + "," + moveDetails.toCol)
-  drawLine(moveDetails);
+  var fromRow = moveDetails.fromRow;
+  var fromCol = moveDetails.fromCol;
+  var toRow = moveDetails.toRow;
+  var toCol= moveDetails.toCol;
+
+  drawLine(fromRow, fromCol, toRow, toCol);
+
+  drawArrowHead(fromRow, fromCol, toRow, toCol);
   
 }
 
-drawLine = function(moveDetails) {
+drawLine = function(fromRow, fromCol, toRow, toCol) {
   ctx.strokeStyle = "#ffe700";
   ctx.lineWidth = 5;
-  var x0 = sqSize/2.0 + sqSize*(moveDetails.fromCol);
-  var y0 = sqSize/2.0 + sqSize*(moveDetails.fromRow);
-  var x1 = sqSize/2.0 + sqSize*(moveDetails.toCol);
-  var y1 = sqSize/2.0 + sqSize*(moveDetails.toRow);
+  var x0 = sqSize/2.0 + sqSize*(fromCol);
+  var y0 = sqSize/2.0 + sqSize*(fromRow);
+  var x1 = sqSize/2.0 + sqSize*(toCol);
+  var y1 = sqSize/2.0 + sqSize*(toRow);
   console.log(x0 + "," + y0);
   console.log(x1 + "," + y1);
 
@@ -227,6 +234,44 @@ drawLine = function(moveDetails) {
   ctx.closePath();
   ctx.stroke();
 }
+
+drawArrowHead = function(fromRow, fromCol, toRow, toCol)
+{
+  var x1 = sqSize/2.0 + sqSize*(toCol);
+  var y1 = sqSize/2.0 + sqSize*(toRow);
+
+  ctx.save();
+  ctx.translate(x1,y1);
+
+  if(toRow < fromRow && toCol < fromCol) {
+
+  }
+  else if(toRow < fromRow && toCol > fromCol){
+    ctx.rotate(90 * Math.PI / 180);
+  }
+  else if(toRow > fromRow && toCol > fromCol) {
+     ctx.rotate(180 * Math.PI / 180);
+  }
+  else if(toRow > fromRow && toCol < fromCol) {
+    ctx.rotate(270 * Math.PI / 180);
+  }
+
+  ctx.fillStyle = "#ffe700";
+  drawTriangle();
+  ctx.restore();
+}
+
+drawTriangle = function(){
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.lineTo(0,sqSize/2.0);
+  ctx.lineTo(sqSize/2.0, 0);
+  ctx.lineTo(0,0);
+  ctx.closePath();
+  ctx.fill();
+}
+
+
 
 drawCheckers = function() {
   var currChecker;
