@@ -180,6 +180,9 @@ var ctx;
 </table>
 
 <script>
+var rect = document.getElementById("content").getBoundingClientRect();
+var contentLeftPos = rect.left;
+var contentTopPos = rect.top;
 var sqSize;
 var checkerImages = [];
 var checkerMap = [];
@@ -354,6 +357,22 @@ drawBoard = function() {
     ctx.fillRect(sqSize*(i%2) + 2*sqSize*j,sqSize*i,sqSize,sqSize);
   } 
 }
+}
+
+
+document.getElementById("content").onmousedown = function(event)
+{
+  var indices = getCursorIndices(event);
+  console.log(indices.i+","+indices.j);
+}
+
+getCursorIndices = function(e) {
+  var indices = {i,j};
+  console.log(contentLeftPos + "," + contentTopPos);
+  console.log(e.clientX + "," + e.clientY);
+  indices.i = Math.floor((e.clientX - contentLeftPos)/sqSize); 
+  indices.j = Math.floor((e.clientY - contentTopPos)/sqSize);
+  return indices;
 }
 
 $(document).ready( function() {
