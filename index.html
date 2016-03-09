@@ -106,25 +106,25 @@ var ctx;
 
       board.addEventListener('add',function (e) {
         drawBoard();
-        //drawCheckers();
+        drawCheckers();
             // Your code here
           },true);
 
       board.addEventListener('move',function (e) {
        drawBoard();
-       //drawCheckers();
+       drawCheckers();
        // Your code here
      },true);
 
       board.addEventListener('remove', function(e) {
         drawBoard();
-        //drawCheckers();
+        drawCheckers();
             // Your code here
           }, true);
 
       board.addEventListener('promote',function (e) {
         drawBoard();
-        //drawCheckers();
+        drawCheckers();
             // Your code here
           },true);
 
@@ -197,6 +197,13 @@ createCheckerImages = function() {
 } 
 
 createCheckerImages();
+
+clearCheckerImages = function() {
+  numCheckers = 2*BOARD_SIZE;
+  for(var i = 0; i < numCheckers; i++) {
+    checkerImages[i].style.visibility = "hidden";
+  }
+}
 
 var getCheckerPath = function(checkerName) {
   var path = null;
@@ -296,6 +303,7 @@ drawCheckers = function() {
   var imgIndex = 0;
 
   clearCheckerMap();
+  clearCheckerImages();
 
   for(i = 0; i < BOARD_SIZE; i++) {
     for(j = 0; j < BOARD_SIZE; j++) {
@@ -307,6 +315,7 @@ drawCheckers = function() {
         if(currCheckerPath != null) {
             currCheckerImage = checkerImages[imgIndex];
             currCheckerImage.setAttribute("src", currCheckerPath);
+            currCheckerImage.style.visibility = "visible";
             setCheckerPosition(currCheckerImage, sqSize*j, sqSize*i);
             checkerMap[i][j] = currCheckerImage;
             imgIndex ++;
