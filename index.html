@@ -193,6 +193,10 @@ var checkerMap = [];
 </table>
 
 <script>
+//Where i, j are used to refer to indices on the checkerboard, 
+// i stands for the row index (downwards), and
+// j stands for the column index (to the right)
+
 var rect = document.getElementById("content").getBoundingClientRect();
 var contentLeftPos = rect.left;
 var contentTopPos = rect.top;
@@ -370,15 +374,23 @@ document.getElementById("content").onmousedown = function(event)
 {
   var indices = getCursorIndices(event);
   console.log(indices.i+","+indices.j);
+  var checkerImage = getCheckerImageAtIndices(indices);
+  if(checkerImage!=null) {
+    console.log(checkerImage.src);
+  }
 }
 
 getCursorIndices = function(e) {
   var indices = {i,j};
   console.log(contentLeftPos + "," + contentTopPos);
   console.log(e.clientX + "," + e.clientY);
-  indices.i = Math.floor((e.clientX - contentLeftPos)/sqSize); 
-  indices.j = Math.floor((e.clientY - contentTopPos)/sqSize);
+  indices.i = Math.floor((e.clientY - contentTopPos)/sqSize);
+  indices.j = Math.floor((e.clientX - contentLeftPos)/sqSize); 
   return indices;
+}
+
+getCheckerImageAtIndices = function(indices) {
+  return checkerMap[indices.i][indices.j];
 }
 
 $(document).ready( function() {
