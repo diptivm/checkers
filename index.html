@@ -47,6 +47,10 @@ var BOARD_SIZE = DEFAULT_BOARD_SIZE;
 var c;
 var ctx;
 
+var sqSize;
+var checkerImages = [];
+var checkerMap = [];
+
     //data model
     var board;
     var rules;
@@ -101,8 +105,17 @@ var ctx;
       rules = new Rules(board);
 
      	// Your code here
+
+      for(var i = 0; i < BOARD_SIZE; i++) {
+         checkerMap[i] = [];
+      }
+
       c = document.getElementById('checkerBoard');
       ctx = c.getContext('2d');
+
+      sqSize = 400/BOARD_SIZE;
+
+      createCheckerImages();
 
       board.addEventListener('add',function (e) {
         drawBoard();
@@ -183,23 +196,16 @@ var ctx;
 var rect = document.getElementById("content").getBoundingClientRect();
 var contentLeftPos = rect.left;
 var contentTopPos = rect.top;
-var sqSize;
-var checkerImages = [];
-var checkerMap = [];
-for(var i = 0; i < BOARD_SIZE; i++) {
-  checkerMap[i] = [];
-}
 
 createCheckerImages = function() {
   numCheckers = 2*BOARD_SIZE;
   for(var i = 0; i < numCheckers; i++) {
     checkerImages[i] = document.createElement('img');
     checkerImages[i].setAttribute("width", sqSize);
+    console.log("width: " + sqSize);
     document.getElementById("content").appendChild( checkerImages[i]);
   }
 } 
-
-createCheckerImages();
 
 clearCheckerImages = function() {
   numCheckers = 2*BOARD_SIZE;
@@ -215,14 +221,14 @@ var getCheckerPath = function(checkerName) {
  }
  else if(checkerName == 'black'){
   path = "graphics/black-piece.png";
- }
- else if(checkerName == 'RED'){
+}
+else if(checkerName == 'RED'){
   path = "graphics/red-king.png";
- }
- else if(checkerName == 'BLACK'){
+}
+else if(checkerName == 'BLACK'){
   path = "graphics/black-king.png";
- }
- return path;
+}
+return path;
 }
 
 setCheckerPosition = function(checkerImage, x, y) {
@@ -316,12 +322,12 @@ drawCheckers = function() {
         console.log("Checker " + currCheckerName + " found at " + i + "," + j);
         currCheckerPath = getCheckerPath(currCheckerName);
         if(currCheckerPath != null) {
-            currCheckerImage = checkerImages[imgIndex];
-            currCheckerImage.setAttribute("src", currCheckerPath);
-            currCheckerImage.style.visibility = "visible";
-            setCheckerPosition(currCheckerImage, sqSize*j, sqSize*i);
-            checkerMap[i][j] = currCheckerImage;
-            imgIndex ++;
+          currCheckerImage = checkerImages[imgIndex];
+          currCheckerImage.setAttribute("src", currCheckerPath);
+          currCheckerImage.style.visibility = "visible";
+          setCheckerPosition(currCheckerImage, sqSize*j, sqSize*i);
+          checkerMap[i][j] = currCheckerImage;
+          imgIndex ++;
         }
       }
     }
@@ -377,7 +383,7 @@ getCursorIndices = function(e) {
 
 $(document).ready( function() {
     //console.log(BOARD_SIZE);
-    sqSize = 400/BOARD_SIZE;
+
     //console.log(sqSize);
 
     c = document.getElementById('checkerBoard');
