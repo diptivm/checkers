@@ -107,58 +107,58 @@ var checkerMap = [];
      	// Your code here
 
       for(var i = 0; i < BOARD_SIZE; i++) {
-         checkerMap[i] = [];
-      }
+       checkerMap[i] = [];
+     }
 
-      c = document.getElementById('checkerBoard');
-      ctx = c.getContext('2d');
+     c = document.getElementById('checkerBoard');
+     ctx = c.getContext('2d');
 
-      sqSize = 400/BOARD_SIZE;
+     sqSize = 400/BOARD_SIZE;
 
-      createCheckerImages();
+     createCheckerImages();
 
-      board.addEventListener('add',function (e) {
-        drawBoard();
-        drawCheckers();
+     board.addEventListener('add',function (e) {
+      drawBoard();
+      drawCheckers();
             // Your code here
           },true);
 
-      board.addEventListener('move',function (e) {
+     board.addEventListener('move',function (e) {
        drawBoard();
        drawCheckers();
        // Your code here
      },true);
 
-      board.addEventListener('remove', function(e) {
-        drawBoard();
-        drawCheckers();
+     board.addEventListener('remove', function(e) {
+      drawBoard();
+      drawCheckers();
             // Your code here
           }, true);
 
-      board.addEventListener('promote',function (e) {
-        drawBoard();
-        drawCheckers();
+     board.addEventListener('promote',function (e) {
+      drawBoard();
+      drawCheckers();
             // Your code here
           },true);
 
 
-      $("#btnNewGame").click(function(evt) {
-        board.prepareNewGame();
-      });
-
-      $("#btnAutoMove").click(function(evt) {
-        var playerColor = whoseTurn;
-        var playerDirection = directionOf(playerColor);
-        var result = rules.makeRandomMove(playerColor, playerDirection);
-        if (result != null) {
-          toggleTurn();
-          drawArrow(result);
-        }
-      });
-
+     $("#btnNewGame").click(function(evt) {
       board.prepareNewGame();
-
     });
+
+     $("#btnAutoMove").click(function(evt) {
+      var playerColor = whoseTurn;
+      var playerDirection = directionOf(playerColor);
+      var result = rules.makeRandomMove(playerColor, playerDirection);
+      if (result != null) {
+        toggleTurn();
+        drawArrow(result);
+      }
+    });
+
+     board.prepareNewGame();
+
+   });
 </script>
 
 
@@ -281,17 +281,16 @@ drawArrowHead = function(fromRow, fromCol, toRow, toCol)
   ctx.translate(x1,y1);
 
   if(toRow < fromRow && toCol < fromCol) {
-
   }
   else if(toRow < fromRow && toCol > fromCol){
     ctx.rotate(90 * Math.PI / 180);
   }
   else if(toRow > fromRow && toCol > fromCol) {
    ctx.rotate(180 * Math.PI / 180);
- }
+  }
  else if(toRow > fromRow && toCol < fromCol) {
   ctx.rotate(270 * Math.PI / 180);
-}
+ }
 
 ctx.fillStyle = "#ffe700";
 drawTriangle();
@@ -369,24 +368,103 @@ drawBoard = function() {
 }
 }
 
+listenForDragDrop = function(event) {
+  event.preventDefault();
+  var coord_initial = getMouseCoordinates(event); 
+  
+  var indices_initial = getCursorIndices(coord_initial);
+  console.log(indices_initial.i+","+indices_initial.j);
 
-document.getElementById("content").onmousedown = function(event)
-{
-  var indices = getCursorIndices(event);
-  console.log(indices.i+","+indices.j);
-  var checkerImage = getCheckerImageAtIndices(indices);
+  var checkerImage = getCheckerImageAtIndices(indices_initial);
   if(checkerImage!=null) {
     console.log(checkerImage.src);
+    addMouseMoveListener(checkerImage, coord_initial);
+    addMouseUpListener(indices_initial);
   }
 }
 
-getCursorIndices = function(e) {
+document.getElementById("content").addEventListener("mousedown", listenForDragDrop);
+
+existsCheckerAt= function(indices) {
+  var checkerImage = getCheckerImageAtIndices(indices);
+  if(checkerImage != null) {
+    return true;
+  }
+
+  return false;
+}
+
+addMouseMoveListener = function(checkerImage, coord_initial) {
+  document.addEventListener("mousemove", processDrag = function(mouseMoveEvent) {
+    var coord_new = getMouseCoordinates(mouseMoveEvent);
+    var dx = coord_new.X - coord_initial.X;
+    var dy = coord_new.Y - coord_initial.Y;
+    console.log(dx +" "+ dy);
+    moveCheckerImage(checkerImage, dx, dy);
+    coord_initial = coord_new;
+  });
+}
+
+moveCheckerImage = function(checkerImage, dx, dy) {
+  var x = parseInt(checkerImage.style.left);
+  var y = parseInt(checkerImage.style.top);
+  console.log(x + "," + y);
+  x+= dx;
+  y+= dy;
+  console.log(x + "," + y);
+  setCheckerPosition(checkerImage, x, y);
+}
+
+addMouseUpListener = function(indices_initial) {
+  document.addEventListener("mouseup", processDrop = function(mouseUpEvent) {
+  console.log("Drag stopped");
+  
+  document.removeEventListener("mousemove", processDrag);
+  document.removeEventListener("mouseup", processDrop);
+  
+  var coord_final = getMouseCoordinates(mouseUpEvent);
+  
+  if(isWithinBoard(coord_final)) {
+    var indices_final = getCursorIndices(coord_final);
+    
+    if(!existsCheckerAt(indices_final)) {
+      attemptCheckerMove(indices_initial, indices_final);
+    }
+  }
+ 
+  drawCheckers();
+
+});
+}
+
+
+getMouseCoordinates = function(mouseEvent) {
+  var coord = {X:0, Y:0};
+  coord.X = mouseEvent.clientX;
+  coord.Y = mouseEvent.clientY;
+  return coord;
+}
+
+getCursorIndices = function(coord) {
   var indices = {i,j};
-  console.log(contentLeftPos + "," + contentTopPos);
-  console.log(e.clientX + "," + e.clientY);
-  indices.i = Math.floor((e.clientY - contentTopPos)/sqSize);
-  indices.j = Math.floor((e.clientX - contentLeftPos)/sqSize); 
+  indices.i = Math.floor((coord.Y - contentTopPos)/sqSize);
+  indices.j = Math.floor((coord.X - contentLeftPos)/sqSize); 
   return indices;
+}
+
+isWithinBoard = function(coord) {
+  return(coord.X >= contentLeftPos 
+     && coord.X <= (contentLeftPos + 400) 
+     && coord.Y >= contentTopPos 
+     && coord.Y <= (contentTopPos + 400)
+     );
+}
+
+attemptCheckerMove = function(indices_initial, indices_final) {
+  console.log("Attempting Checker Move");
+  var movingChecker = board.getCheckerAt(indices_initial.i, indices_initial.j);
+  console.log(movingChecker.row + " " + movingChecker.col);
+  board.moveTo(movingChecker, indices_final.i, indices_final.j);
 }
 
 getCheckerImageAtIndices = function(indices) {
