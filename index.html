@@ -438,11 +438,10 @@ addMouseUpListener = function(checker, turnDirection, playerDirection) {
     if(isWithinBoard(coord_final)) {
       var indices_final = getCursorIndices(coord_final);
 
-      if(!existsCheckerAt(indices_final)) {
-        var moveResult = attemptCheckerMove(checker, indices_final, turnDirection, playerDirection);
-        if(moveResult != null) {
-          toggleTurn();
-        }
+      var moveResult = attemptCheckerMove(checker, indices_final, turnDirection, playerDirection);
+      if(moveResult != null) {
+        toggleTurn();
+        
       }
     }
 
