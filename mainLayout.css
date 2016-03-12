@@ -40,6 +40,13 @@
 	height: 400px;
 }
 
+#blank {
+	background-color:none;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
 #turn-feedback {
 	width: 100%;
 	text-align: center;
