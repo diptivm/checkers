@@ -75,11 +75,11 @@ var checkerMap = [];
     else if("red" == whoseTurn) {
       whoseTurn = "black";
     }
-    toggleTurnFeedback();
+    updateTurnFeedback();
     // Your code here
   }
 
-  var toggleTurnFeedback = function() {
+  var updateTurnFeedback = function() {
     if("black" == whoseTurn) {
       document.getElementById('turn-feedback').innerHTML = "Black Turn";
       document.getElementById('turn-feedback').className = 'black-turn';
@@ -154,6 +154,9 @@ var checkerMap = [];
      $("#btnNewGame").click(function(evt) {
       board.prepareNewGame();
       refreshCanvasTop();
+      whoseTurn = "black";
+      updateTurnFeedback();
+
     });
 
      $("#btnAutoMove").click(function(evt) {
@@ -195,7 +198,7 @@ var checkerMap = [];
       <div class = "fixed-height">
        <canvas id = "checkerBoard" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
        <div id = "checkers-container"> </div>
-        <canvas id = "blank" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
+       <canvas id = "blank" width = "400" height = "400"> This browser does not support the HTML5 canvas tag. </canvas> 
        <!-- Your code here -->
      </div>
    </td>
@@ -261,9 +264,17 @@ drawArrow = function(moveDetails) {
   var toRow = moveDetails.toRow;
   var toCol= moveDetails.toCol;
 
-  drawLine(fromRow, fromCol, toRow, toCol);
+  var x0 = sqSize/2.0 + sqSize*(fromCol);
+  var y0 = sqSize/2.0 + sqSize*(fromRow);
+  var x1 = sqSize/2.0 + sqSize*(toCol);
+  var y1 = sqSize/2.0 + sqSize*(toRow);
 
-  drawArrowHead(fromRow, fromCol, toRow, toCol);
+  console.log(x0 + "," + y0);
+  console.log(x1 + "," + y1);
+
+  drawLine(x0,y0,x1,y1);
+
+  drawArrowHead(x0,y0,x1,y1);
   
 }
 
@@ -271,15 +282,9 @@ refreshCanvasTop = function() {
   ctx_top.clearRect(0,0,c_top.width,c_top.height);
 }
 
-drawLine = function(fromRow, fromCol, toRow, toCol) {
+drawLine = function(x0,y0,x1,y1) {
   ctx_top.strokeStyle = "#ffe700";
   ctx_top.lineWidth = 5;
-  var x0 = sqSize/2.0 + sqSize*(fromCol);
-  var y0 = sqSize/2.0 + sqSize*(fromRow);
-  var x1 = sqSize/2.0 + sqSize*(toCol);
-  var y1 = sqSize/2.0 + sqSize*(toRow);
-  console.log(x0 + "," + y0);
-  console.log(x1 + "," + y1);
 
   ctx_top.beginPath()
   ctx_top.moveTo(x0,y0);
@@ -288,29 +293,20 @@ drawLine = function(fromRow, fromCol, toRow, toCol) {
   ctx_top.stroke();
 }
 
-drawArrowHead = function(fromRow, fromCol, toRow, toCol)
+drawArrowHead = function(x0,y0,x1,y1)
 {
-  var x1 = sqSize/2.0 + sqSize*(toCol);
-  var y1 = sqSize/2.0 + sqSize*(toRow);
-
+  var theta;
+  theta = Math.atan2(-(y1-y0), (x1-x0));
+  console.log(theta);
+  
   ctx_top.save();
   ctx_top.translate(x1,y1);
 
-  if(toRow < fromRow && toCol < fromCol) {
-  }
-  else if(toRow < fromRow && toCol > fromCol){
-    ctx_top.rotate(90 * Math.PI / 180);
-  }
-  else if(toRow > fromRow && toCol > fromCol) {
-   ctx_top.rotate(180 * Math.PI / 180);
-  }
- else if(toRow > fromRow && toCol < fromCol) {
-  ctx_top.rotate(270 * Math.PI / 180);
- }
+  ctx_top.rotate((3*Math.PI/4)-theta);
 
-ctx_top.fillStyle = "#ffe700";
-drawTriangle();
-ctx_top.restore();
+  ctx_top.fillStyle = "#ffe700";
+  drawTriangle();
+  ctx_top.restore();
 }
 
 drawTriangle = function(){
@@ -391,11 +387,16 @@ listenForDragDrop = function(event) {
   var indices_initial = getCursorIndices(coord_initial);
   console.log(indices_initial.i+","+indices_initial.j);
 
-  var checkerImage = getCheckerImageAtIndices(indices_initial);
-  if(checkerImage!=null) {
-    console.log(checkerImage.src);
-    addMouseMoveListener(checkerImage, coord_initial);
-    addMouseUpListener(indices_initial);
+  var turnDirection = directionOf(whoseTurn);
+  var currChecker = board.getCheckerAt(indices_initial.i, indices_initial.j);
+
+  if(currChecker!= null) {
+    var playerDirection = directionOf(currChecker.color);
+    if(playerDirection == turnDirection) {
+      var checkerImage = getCheckerImageAtIndices(indices_initial);
+      addMouseMoveListener(checkerImage, coord_initial);
+      addMouseUpListener(indices_initial, turnDirection, playerDirection);
+    }
   }
 }
 
@@ -409,6 +410,7 @@ existsCheckerAt= function(indices) {
 
   return false;
 }
+
 
 addMouseMoveListener = function(checkerImage, coord_initial) {
   document.addEventListener("mousemove", processDrag = function(mouseMoveEvent) {
@@ -431,26 +433,30 @@ moveCheckerImage = function(checkerImage, dx, dy) {
   setCheckerPosition(checkerImage, x, y);
 }
 
-addMouseUpListener = function(indices_initial) {
+addMouseUpListener = function(indices_initial, turnDirection, playerDirection) {
   document.addEventListener("mouseup", processDrop = function(mouseUpEvent) {
-  console.log("Drag stopped");
-  
-  document.removeEventListener("mousemove", processDrag);
-  document.removeEventListener("mouseup", processDrop);
-  
-  var coord_final = getMouseCoordinates(mouseUpEvent);
-  
-  if(isWithinBoard(coord_final)) {
-    var indices_final = getCursorIndices(coord_final);
-    
-    if(!existsCheckerAt(indices_final)) {
-      attemptCheckerMove(indices_initial, indices_final);
-    }
-  }
- 
-  drawCheckers();
+    console.log("Drag stopped");
 
-});
+    document.removeEventListener("mousemove", processDrag);
+    document.removeEventListener("mouseup", processDrop);
+
+    var coord_final = getMouseCoordinates(mouseUpEvent);
+
+    if(isWithinBoard(coord_final)) {
+      var indices_final = getCursorIndices(coord_final);
+
+      if(!existsCheckerAt(indices_final)) {
+        var moveResult = attemptCheckerMove(indices_initial, indices_final, turnDirection, playerDirection);
+        if(moveResult != null) {
+          console.log("Valid move");
+          toggleTurn();
+        }
+      }
+    }
+
+    drawCheckers();
+
+  });
 }
 
 
@@ -470,17 +476,19 @@ getCursorIndices = function(coord) {
 
 isWithinBoard = function(coord) {
   return(coord.X >= contentLeftPos 
-     && coord.X <= (contentLeftPos + 400) 
-     && coord.Y >= contentTopPos 
-     && coord.Y <= (contentTopPos + 400)
-     );
+   && coord.X <= (contentLeftPos + 400) 
+   && coord.Y >= contentTopPos 
+   && coord.Y <= (contentTopPos + 400)
+   );
 }
 
-attemptCheckerMove = function(indices_initial, indices_final) {
+attemptCheckerMove = function(indices_initial, indices_final, turnDirection, playerDirection) {
   console.log("Attempting Checker Move");
   var movingChecker = board.getCheckerAt(indices_initial.i, indices_initial.j);
   console.log(movingChecker.row + " " + movingChecker.col);
-  board.moveTo(movingChecker, indices_final.i, indices_final.j);
+  //board.moveTo(movingChecker, indices_final.i, indices_final.j);
+  var moveResult = rules.makeMove(movingChecker, turnDirection, playerDirection, indices_final.i, indices_final.j);
+  return moveResult;
 }
 
 getCheckerImageAtIndices = function(indices) {
@@ -489,14 +497,14 @@ getCheckerImageAtIndices = function(indices) {
 
 $(document).ready( function() {
 
-    drawBoard();
+  drawBoard();
 
-    window.onload  = function() {
-      console.log("window load");
-      drawCheckers();
-    }
+  window.onload  = function() {
+    console.log("window load");
+    drawCheckers();
+  }
 
-  });
+});
 
 </script>
 </body>
