@@ -54,30 +54,30 @@ var sqSize;
 var checkerImages = [];
 var checkerMap = [];
 
-    //data model
-    var board;
-    var rules;
-    var whoseTurn = "black";	
+//data model
+var board;
+var rules;
+var whoseTurn = "black";	
 
-    var directionOf = function(color) {
-      if (color == "black") {
-        return -1;
-      }
-      return 1;
-    }
-
-    // Fill in this function to toggle the display for whose turn
-    // The color parameter should be either "black" or "red"
-    var toggleTurn = function(color) {
-     if("black" == whoseTurn) {
-      whoseTurn = "red";
-    }
-    else if("red" == whoseTurn) {
-      whoseTurn = "black";
-    }
-    updateTurnFeedback();
-    // Your code here
+var directionOf = function(color) {
+  if (color == "black") {
+    return -1;
   }
+  return 1;
+}
+
+// Fill in this function to toggle the display for whose turn
+// The color parameter should be either "black" or "red"
+var toggleTurn = function(color) {
+ if("black" == whoseTurn) {
+    whoseTurn = "red";
+  }
+  else if("red" == whoseTurn) {
+  whoseTurn = "black";
+  }
+  updateTurnFeedback();
+// Your code here
+}
 
   var updateTurnFeedback = function() {
     if("black" == whoseTurn) {
@@ -125,13 +125,11 @@ var checkerMap = [];
      createCheckerImages();
 
      board.addEventListener('add',function (e) {
-      drawBoard();
       drawCheckers();
             // Your code here
           },true);
 
      board.addEventListener('move',function (e) {
-       drawBoard();
        drawCheckers();
        refreshCanvasTop();
        drawArrow(e.details);
@@ -139,13 +137,11 @@ var checkerMap = [];
      },true);
 
      board.addEventListener('remove', function(e) {
-      drawBoard();
       drawCheckers();
             // Your code here
           }, true);
 
      board.addEventListener('promote',function (e) {
-      drawBoard();
       drawCheckers();
             // Your code here
           },true);
@@ -172,7 +168,6 @@ var checkerMap = [];
 
    });
 </script>
-
 
 </head>
 
@@ -221,7 +216,6 @@ createCheckerImages = function() {
     checkerImages[i] = document.createElement('img');
     checkerImages[i].setAttribute("width", sqSize);
     checkerImages[i].style.position = "absolute";
-    console.log("width: " + sqSize);
     document.getElementById("checkers-container").appendChild( checkerImages[i]);
   }
 } 
@@ -253,70 +247,6 @@ return path;
 setCheckerPosition = function(checkerImage, x, y) {
   checkerImage.style.left = x + "px";
   checkerImage.style.top = y + "px";
-}
-
-
-drawArrow = function(moveDetails) {
-  console.log("Arrow from: " + moveDetails.fromRow + "," + moveDetails.fromCol);
-  console.log("Arrow to: " + moveDetails.toRow + "," + moveDetails.toCol)
-  var fromRow = moveDetails.fromRow;
-  var fromCol = moveDetails.fromCol;
-  var toRow = moveDetails.toRow;
-  var toCol= moveDetails.toCol;
-
-  var x0 = sqSize/2.0 + sqSize*(fromCol);
-  var y0 = sqSize/2.0 + sqSize*(fromRow);
-  var x1 = sqSize/2.0 + sqSize*(toCol);
-  var y1 = sqSize/2.0 + sqSize*(toRow);
-
-  console.log(x0 + "," + y0);
-  console.log(x1 + "," + y1);
-
-  drawLine(x0,y0,x1,y1);
-
-  drawArrowHead(x0,y0,x1,y1);
-  
-}
-
-refreshCanvasTop = function() {
-  ctx_top.clearRect(0,0,c_top.width,c_top.height);
-}
-
-drawLine = function(x0,y0,x1,y1) {
-  ctx_top.strokeStyle = "#ffe700";
-  ctx_top.lineWidth = 5;
-
-  ctx_top.beginPath()
-  ctx_top.moveTo(x0,y0);
-  ctx_top.lineTo(x1, y1);
-  ctx_top.closePath();
-  ctx_top.stroke();
-}
-
-drawArrowHead = function(x0,y0,x1,y1)
-{
-  var theta;
-  theta = Math.atan2(-(y1-y0), (x1-x0));
-  console.log(theta);
-  
-  ctx_top.save();
-  ctx_top.translate(x1,y1);
-
-  ctx_top.rotate((3*Math.PI/4)-theta);
-
-  ctx_top.fillStyle = "#ffe700";
-  drawTriangle();
-  ctx_top.restore();
-}
-
-drawTriangle = function(){
-  ctx_top.beginPath();
-  ctx_top.moveTo(0,0);
-  ctx_top.lineTo(0,sqSize/2.0);
-  ctx_top.lineTo(sqSize/2.0, 0);
-  ctx_top.lineTo(0,0);
-  ctx_top.closePath();
-  ctx_top.fill();
 }
 
 drawCheckers = function() {
@@ -369,6 +299,68 @@ echoCheckerMap = function() {
   }
 }
 
+refreshCanvasTop = function() {
+  ctx_top.clearRect(0,0,c_top.width,c_top.height);
+}
+
+drawArrow = function(moveDetails) {
+  console.log("Arrow from: " + moveDetails.fromRow + "," + moveDetails.fromCol);
+  console.log("Arrow to: " + moveDetails.toRow + "," + moveDetails.toCol)
+  var fromRow = moveDetails.fromRow;
+  var fromCol = moveDetails.fromCol;
+  var toRow = moveDetails.toRow;
+  var toCol= moveDetails.toCol;
+
+  var x0 = sqSize/2.0 + sqSize*(fromCol);
+  var y0 = sqSize/2.0 + sqSize*(fromRow);
+  var x1 = sqSize/2.0 + sqSize*(toCol);
+  var y1 = sqSize/2.0 + sqSize*(toRow);
+
+  drawLine(x0,y0,x1,y1);
+
+  drawArrowHead(x0,y0,x1,y1);
+  
+}
+
+
+drawLine = function(x0,y0,x1,y1) {
+  ctx_top.strokeStyle = "#ffe700";
+  ctx_top.lineWidth = 5;
+
+  ctx_top.beginPath()
+  ctx_top.moveTo(x0,y0);
+  ctx_top.lineTo(x1, y1);
+  ctx_top.closePath();
+  ctx_top.stroke();
+}
+
+drawArrowHead = function(x0,y0,x1,y1)
+{
+  var theta;
+  theta = Math.atan2(-(y1-y0), (x1-x0));
+  
+  ctx_top.save();
+  ctx_top.translate(x1,y1);
+
+  ctx_top.rotate((3*Math.PI/4)-theta);
+
+  ctx_top.fillStyle = "#ffe700";
+  drawTriangle();
+  ctx_top.restore();
+}
+
+drawTriangle = function(){
+  ctx_top.beginPath();
+  ctx_top.moveTo(0,0);
+  ctx_top.lineTo(0,sqSize/2.0);
+  ctx_top.lineTo(sqSize/2.0, 0);
+  ctx_top.lineTo(0,0);
+  ctx_top.closePath();
+  ctx_top.fill();
+}
+
+
+
 drawBoard = function() {
   ctx.fillStyle = "gray";
   ctx.fillRect(0,0,400,400);
@@ -419,7 +411,6 @@ addMouseMoveListener = function(checkerImage, coord_initial) {
     var coord_new = getMouseCoordinates(mouseMoveEvent);
     var dx = coord_new.X - coord_initial.X;
     var dy = coord_new.Y - coord_initial.Y;
-    console.log(dx +" "+ dy);
     moveCheckerImage(checkerImage, dx, dy);
     coord_initial = coord_new;
   });
@@ -450,7 +441,6 @@ addMouseUpListener = function(checker, turnDirection, playerDirection) {
       if(!existsCheckerAt(indices_final)) {
         var moveResult = attemptCheckerMove(checker, indices_final, turnDirection, playerDirection);
         if(moveResult != null) {
-          console.log("Valid move");
           toggleTurn();
         }
       }
@@ -485,8 +475,7 @@ isWithinBoard = function(coord) {
 }
 
 attemptCheckerMove = function(movingChecker, indices_final, turnDirection, playerDirection) {
-  console.log("Attempting Checker Move");
-  console.log(movingChecker.row + " " + movingChecker.col);
+  console.log("Attempting Checker Move from " + movingChecker.row + "," + movingChecker.col);
   var moveResult = rules.makeMove(movingChecker, turnDirection, playerDirection, indices_final.i, indices_final.j);
   return moveResult;
 }
@@ -496,7 +485,7 @@ getCheckerImageAtIndices = function(indices) {
 }
 
 getSpareCheckerImage = function() {
-    return checkerImages[checkerImages.length-1];
+  return checkerImages[checkerImages.length-1];
 }
 
 replaceCheckerImageAtIndices = function(indices) {
@@ -508,7 +497,6 @@ replaceCheckerImageAtIndices = function(indices) {
   superposedImage.style.top = actualImage.style.top;
   
   console.log("replacing: "+ actualImage.src);
-  console.log("actual image pos: " + actualImage.style.left + " " + actualImage.style.top);
 
   actualImage.style.visibility = "hidden";
   superposedImage.style.visibility = "visible";
