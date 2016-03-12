@@ -216,17 +216,18 @@ var contentLeftPos = rect.left;
 var contentTopPos = rect.top;
 
 createCheckerImages = function() {
-  numCheckers = 2*BOARD_SIZE;
+  numCheckers = 2*BOARD_SIZE+1; //1 extra checker for drag-and-drop
   for(var i = 0; i < numCheckers; i++) {
     checkerImages[i] = document.createElement('img');
     checkerImages[i].setAttribute("width", sqSize);
+    checkerImages[i].style.position = "absolute";
     console.log("width: " + sqSize);
     document.getElementById("checkers-container").appendChild( checkerImages[i]);
   }
 } 
 
 clearCheckerImages = function() {
-  numCheckers = 2*BOARD_SIZE;
+  numCheckers = checkerImages.length;
   for(var i = 0; i < numCheckers; i++) {
     checkerImages[i].style.visibility = "hidden";
   }
@@ -250,7 +251,6 @@ return path;
 }
 
 setCheckerPosition = function(checkerImage, x, y) {
-  checkerImage.style.position = "absolute";
   checkerImage.style.left = x + "px";
   checkerImage.style.top = y + "px";
 }
@@ -393,7 +393,9 @@ listenForDragDrop = function(event) {
   if(currChecker!= null) {
     var playerDirection = directionOf(currChecker.color);
     if(playerDirection == turnDirection) {
-      var checkerImage = getCheckerImageAtIndices(indices_initial);
+      //var checkerImage = getCheckerImageAtIndices(indices_initial);
+      var checkerImage = replaceCheckerImageAtIndices(indices_initial);
+
       addMouseMoveListener(checkerImage, coord_initial);
       addMouseUpListener(currChecker, turnDirection, playerDirection);
     }
@@ -491,6 +493,27 @@ attemptCheckerMove = function(movingChecker, indices_final, turnDirection, playe
 
 getCheckerImageAtIndices = function(indices) {
   return checkerMap[indices.i][indices.j];
+}
+
+getSpareCheckerImage = function() {
+    return checkerImages[checkerImages.length-1];
+}
+
+replaceCheckerImageAtIndices = function(indices) {
+  var actualImage = getCheckerImageAtIndices(indices);
+  var superposedImage = getSpareCheckerImage();
+
+  superposedImage.setAttribute("src", actualImage.src);
+  superposedImage.style.left = actualImage.style.left;
+  superposedImage.style.top = actualImage.style.top;
+  
+  console.log("replacing: "+ actualImage.src);
+  console.log("actual image pos: " + actualImage.style.left + " " + actualImage.style.top);
+
+  actualImage.style.visibility = "hidden";
+  superposedImage.style.visibility = "visible";
+
+  return superposedImage;
 }
 
 $(document).ready( function() {
