@@ -395,7 +395,7 @@ listenForDragDrop = function(event) {
     if(playerDirection == turnDirection) {
       var checkerImage = getCheckerImageAtIndices(indices_initial);
       addMouseMoveListener(checkerImage, coord_initial);
-      addMouseUpListener(indices_initial, turnDirection, playerDirection);
+      addMouseUpListener(currChecker, turnDirection, playerDirection);
     }
   }
 }
@@ -433,7 +433,7 @@ moveCheckerImage = function(checkerImage, dx, dy) {
   setCheckerPosition(checkerImage, x, y);
 }
 
-addMouseUpListener = function(indices_initial, turnDirection, playerDirection) {
+addMouseUpListener = function(checker, turnDirection, playerDirection) {
   document.addEventListener("mouseup", processDrop = function(mouseUpEvent) {
     console.log("Drag stopped");
 
@@ -446,7 +446,7 @@ addMouseUpListener = function(indices_initial, turnDirection, playerDirection) {
       var indices_final = getCursorIndices(coord_final);
 
       if(!existsCheckerAt(indices_final)) {
-        var moveResult = attemptCheckerMove(indices_initial, indices_final, turnDirection, playerDirection);
+        var moveResult = attemptCheckerMove(checker, indices_final, turnDirection, playerDirection);
         if(moveResult != null) {
           console.log("Valid move");
           toggleTurn();
@@ -482,11 +482,9 @@ isWithinBoard = function(coord) {
    );
 }
 
-attemptCheckerMove = function(indices_initial, indices_final, turnDirection, playerDirection) {
+attemptCheckerMove = function(movingChecker, indices_final, turnDirection, playerDirection) {
   console.log("Attempting Checker Move");
-  var movingChecker = board.getCheckerAt(indices_initial.i, indices_initial.j);
   console.log(movingChecker.row + " " + movingChecker.col);
-  //board.moveTo(movingChecker, indices_final.i, indices_final.j);
   var moveResult = rules.makeMove(movingChecker, turnDirection, playerDirection, indices_final.i, indices_final.j);
   return moveResult;
 }
